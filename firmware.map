@@ -1,0 +1,78 @@
+
+Discarded input sections
+
+ .data          0x0000000000000000        0x0 .pio/build/upesy_wroom/src/crt0.o
+ .bss           0x0000000000000000        0x0 .pio/build/upesy_wroom/src/crt0.o
+ .xt.lit        0x0000000000000000        0x8 .pio/build/upesy_wroom/src/crt0.o
+ .xt.prop       0x0000000000000000       0x24 .pio/build/upesy_wroom/src/crt0.o
+ .data          0x0000000000000000        0x0 .pio/build/upesy_wroom/src/main.o
+ .bss           0x0000000000000000        0x0 .pio/build/upesy_wroom/src/main.o
+ .xt.lit        0x0000000000000000       0x10 .pio/build/upesy_wroom/src/main.o
+ .xt.prop       0x0000000000000000       0x84 .pio/build/upesy_wroom/src/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000000010000 0x0000000000300000 xr
+IRAM             0x0000000040080000 0x0000000000040000 xr
+DRAM             0x000000003ffb0000 0x0000000000048000 rw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.text           0x0000000040080000       0x8c
+                0x000000004008008c                _text_start = .
+ *(.text.startup)
+ .text.startup  0x0000000040080000        0x6 .pio/build/upesy_wroom/src/crt0.o
+                                          0x9 (size before relaxing)
+                0x0000000040080000                _start
+ *(.literal*)
+ *fill*         0x0000000040080006        0x2 
+ .literal.startup
+                0x0000000040080008        0x0 .pio/build/upesy_wroom/src/crt0.o
+                                          0x4 (size before relaxing)
+ .literal._Z5delayj
+                0x0000000040080008        0x4 .pio/build/upesy_wroom/src/main.o
+ .literal.main  0x000000004008000c        0xc .pio/build/upesy_wroom/src/main.o
+                                         0x14 (size before relaxing)
+ *(.rodata*)
+ *(.text*)
+ .text._Z5delayj
+                0x0000000040080018       0x3a .pio/build/upesy_wroom/src/main.o
+                0x0000000040080018                _Z5delayj
+ *fill*         0x0000000040080052        0x2 
+ .text.main     0x0000000040080054       0x38 .pio/build/upesy_wroom/src/main.o
+                                         0x3c (size before relaxing)
+                0x0000000040080054                main
+ .text          0x000000004008008c        0x0 .pio/build/upesy_wroom/src/crt0.o
+ .text          0x000000004008008c        0x0 .pio/build/upesy_wroom/src/main.o
+ *fill*         0x000000004008008c        0x0 
+                0x000000004008008c                _etext = .
+                0x000000004008008c                _text_start = .
+ *(.text.startup)
+ *(.text.main)
+ *(.text*)
+ *(.literal*)
+ *(.rodata*)
+                0x000000004008008c                _etext = .
+
+.bss            0x000000003ffb0000        0x0
+                0x000000003ffb0000                _bss_start = .
+ *(.bss*)
+ *(COMMON)
+                0x000000003ffb0000                _bss_end = .
+                0x000000003fff8000                _stack_start = (ORIGIN (DRAM) + LENGTH (DRAM))
+                0x000000003ffb0000                _heap_start = _bss_end
+                0x000000003fff8000                _heap_end = _stack_start
+LOAD .pio/build/upesy_wroom/src/crt0.o
+LOAD .pio/build/upesy_wroom/src/main.o
+OUTPUT(.pio/build/upesy_wroom/firmware.elf elf32-xtensa-le)
+
+.xtensa.info    0x0000000000000000       0x38
+ .xtensa.info   0x0000000000000000       0x38 .pio/build/upesy_wroom/src/crt0.o
+ .xtensa.info   0x0000000000000038        0x0 .pio/build/upesy_wroom/src/main.o
+
+.comment        0x0000000000000000       0x2c
+ .comment       0x0000000000000000       0x2c .pio/build/upesy_wroom/src/main.o
+                                         0x2d (size before relaxing)
