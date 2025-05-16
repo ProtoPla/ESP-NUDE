@@ -1,49 +1,59 @@
-/* Minimal linker script for ESP32 WROOM-32 bare-metal */
-
-/* Adjust FLASH and IRAM sizes and start addresses as needed */
+/* Bare-metal linker script for ESP32-D0WD-V3
+   Aligned with ESP-IDF layout: app starts at 0x10000 */
 
 MEMORY
 {
-  /* ESP32 typically has 4MB flash starting at 0x100000 */
-  FLASH (rx) : ORIGIN = 0x100000, LENGTH = 4M
+  /* Application firmware location (after bootloader & partition table) */
+  FLASH (rx)  : ORIGIN = 0x10000, LENGTH = 3M  /* From 0x10000 onward */
 
-  /* IRAM for executable code and literals (typically 0x40000000) */
-  IRAM (rx) : ORIGIN = 0x40080000, LENGTH = 512K
+  /* Instruction RAM (IRAM) for code */
+  IRAM (rx)   : ORIGIN = 0x40080000, LENGTH = 256K
+
+  /* Data RAM (DRAM) for variables */
+  DRAM (rw)   : ORIGIN = 0x3FFB0000, LENGTH = 288K
 }
 
-/* Entry point */
 ENTRY(_start)
 
 SECTIONS
 {
-  /* Text section: code + literals + read-only data */
+  /* Code and read-only sections */
   .text : ALIGN(4)
   {
-    KEEP(*(.text.startup))   /* crt0 startup */
-    *(.literal)              /* literals before code */
-    *(.rodata*)              /* read-only data */
-    *(.text*)                /* all code */
+    _text_start = .;
+    KEEP(*(.text.startup))
+    *(.literal*)
+    *(.rodata*)
+    *(.text*)
+    _etext = .;
   } > IRAM
 
-  /* Data section: initialized data */
-  .data : ALIGN(4)
+  /* Initialized data */
+.text : ALIGN(4)
   {
-    _data = .;
-    *(.data*)
-    _edata = .;
+      _text_start = .;
+
+      KEEP(*(.text.startup))  /* Keep crt0.o _start */
+      KEEP(*(.text.main))     /* In case main() is dropped */
+      KEEP(*(.text*))
+      KEEP(*(.literal*))
+      KEEP(*(.rodata*))
+
+      _etext = .;
   } > IRAM
 
-  /* BSS section: zero-initialized data */
+  /* Zero-initialized data */
   .bss : ALIGN(4)
   {
     _bss_start = .;
     *(.bss*)
     *(COMMON)
     _bss_end = .;
-  } > IRAM
+  } > DRAM
 
-  /* Stack and heap could be defined here if you want */
-
-  /* Provide symbols for runtime */
-  _stack_start = ORIGIN(IRAM) + LENGTH(IRAM);
+  /* Optional stack and heap */
+  _stack_start = ORIGIN(DRAM) + LENGTH(DRAM);
+  _heap_start = _bss_end;
+  _heap_end = _stack_start;
 }
+

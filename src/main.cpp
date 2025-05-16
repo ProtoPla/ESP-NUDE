@@ -12,6 +12,7 @@ void delay(volatile uint32_t t) {
     }
 }
 
+extern "C" __attribute__((section(".text.main")))
 int main() {
     GPIO_ENABLE_REG |= (1 << LED_GPIO);
 
